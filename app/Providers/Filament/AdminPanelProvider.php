@@ -17,7 +17,6 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Filament\Facades\Filament;
 
 use App\Filament\Auth\Login;
 
@@ -28,6 +27,7 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('admin')
+            ->spa()
             ->path('admin')
             ->login(Login::class)
             ->colors([
@@ -48,16 +48,46 @@ class AdminPanelProvider extends PanelProvider
                 AddQueuedCookiesToResponse::class,
                 StartSession::class,
                 AuthenticateSession::class,
-                ShareErrorsFromSession::class,
                 VerifyCsrfToken::class,
                 SubstituteBindings::class,
-                DisableBladeIconComponents::class,
-                DispatchServingFilamentEvent::class,
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ;
     }
+
+    /*
+
+    EncryptCookies::class,
+    AddQueuedCookiesToResponse::class,
+    StartSession::class,
+    AuthenticateSession::class,
+    ShareErrorsFromSession::class,
+    VerifyCsrfToken::class,
+    SubstituteBindings::class,
+    DisableBladeIconComponents::class,
+    DispatchServingFilamentEvent::class,
+
+
+    public function boot(): void
+    {
+        Filament::serving(function () {
+            Filament::registerNavigationItems([
+                // Навигация для Dashboard
+                NavigationItem::make('Dashboard')
+                    ->url(route('filament.admin.pages.dashboard', ['wire:navigate' => true]))
+                    ->icon('heroicon-o-home')
+                    ->group('Main Navigation'),
+
+                NavigationItem::make('Users')
+                    ->url(route('filament.admin.resources.users.index', ['wire:navigate' => true]))
+                    ->icon('heroicon-o-users')
+                    ->group('Main Navigation')
+                    ->badge(fn () => \App\Models\User::count())
+            ]);
+        });
+    }*/
 
     /*
     public function boot()
