@@ -8,6 +8,9 @@ use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Filament\Pages\Auth\Login as BaseLogin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
+
+use App\Models\User;
 
 class Login extends BaseLogin
 {
@@ -54,12 +57,18 @@ class Login extends BaseLogin
             // Сохраняем токен в сессии
             session(['api_token' => $accessToken]);
 
+            // Выполняем аутентификацию пользователя в Laravel
+            $user = User::where('email', $this->email)->first();
+            if ($user) {
+                Auth::login($user);
+            }
+
             Notification::make()
                 ->title('Успешный вход')
                 ->body('Вы вошли в систему.')
                 ->success()
                 ->send();
-
+  
             // Перенаправляем пользователя в панель управления
             return app(LoginResponse::class);
 
